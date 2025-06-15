@@ -41,8 +41,6 @@ main() {
 
 main
 
-#!/bin/bash
-
 # Define script version
 SCRIPT_VERSION="v0.6.0"
 
