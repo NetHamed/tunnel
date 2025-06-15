@@ -1,14 +1,19 @@
 #!/bin/bash
 
-# =========[ Basic License Validation ]=========
-LICENSE_FILE="/etc/backhaul.license"
-
+# -------- رنگ‌ها --------
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+CYAN='\033[1;36m'
 NC='\033[0m'
 
-function check_license() {
+# -------- مسیرها --------
+LICENSE_FILE="/etc/backhaul.license"
+USED_FLAG="/etc/.backhaul_used"
+MACHINE_ID=$(cat /etc/machine-id 2>/dev/null)
+
+# -------- بررسی لایسنس --------
+check_license() {
   if [[ ! -f "$LICENSE_FILE" ]]; then
     echo -e "${RED}[ERROR] License file not found at $LICENSE_FILE${NC}"
     exit 1
@@ -16,30 +21,45 @@ function check_license() {
 
   local decoded=$(base64 -d "$LICENSE_FILE" 2>/dev/null)
   if [[ -z "$decoded" ]]; then
-    echo -e "${RED}[ERROR] License file is invalid (decode failed).${NC}"
+    echo -e "${RED}[ERROR] Failed to decode license. File may be corrupted.${NC}"
     exit 1
   fi
 
   local expire_date=$(echo "$decoded" | jq -r '.expire')
+  local username=$(echo "$decoded" | jq -r '.user')
+  local license_id=$(echo "$decoded" | jq -r '.machine')
   local current_date=$(date +%Y-%m-%d)
+
+  if [[ "$MACHINE_ID" != "$license_id" ]]; then
+    echo -e "${RED}[ERROR] This license is not valid for this machine.${NC}"
+    echo -e "${YELLOW}Expected: $license_id${NC}"
+    echo -e "${YELLOW}Found:    $MACHINE_ID${NC}"
+    exit 1
+  fi
 
   if [[ "$current_date" > "$expire_date" ]]; then
     echo -e "${RED}[ERROR] License expired on $expire_date${NC}"
     exit 1
   fi
 
-  echo -e "${GREEN}[OK] License valid until $expire_date${NC}"
+  if [[ -f "$USED_FLAG" ]]; then
+    echo -e "${RED}[ERROR] License has already been used once. Single-use license.${NC}"
+    exit 1
+  fi
+
+  echo -e "${GREEN}[OK] License valid for user '${username}', expires on $expire_date${NC}"
+  touch "$USED_FLAG"
 }
 
-# =========[ Your Real Script Goes Here ]=========
-main() {
-  check_license
-  echo -e "${YELLOW}>>> Running your backhaul logic...${NC}"
-  sleep 1
-  echo -e "${GREEN}>>> Everything is working!${NC}"
+# -------- منطق برنامه اصلی --------
+main_logic() {
+  echo -e "${CYAN}>>> Backhaul script running successfully on authorized machine.${NC}"
+  # this is where your main functionality goes
 }
 
-main
+# -------- اجرای اسکریپت --------
+check_license
+main_logic
 
 # Define script version
 SCRIPT_VERSION="v0.6.0"
