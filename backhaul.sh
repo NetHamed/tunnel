@@ -171,10 +171,10 @@ download_and_extract_backhaul() {
     ARCH=$(uname -m)
     case "$ARCH" in
         x86_64)
-            DOWNLOAD_URL="https://raw.githubusercontent.com/wafflenoodle/zenith-stash/refs/heads/main/backhaul_amd64.tar.gz"
+            DOWNLOAD_URL="https://github.com/NetHamed/tunnel/raw/refs/heads/main/backhaul_premium_linux_amd64.tar.gz"
             ;;
         arm64|aarch64)
-            DOWNLOAD_URL="https://raw.githubusercontent.com/wafflenoodle/zenith-stash/refs/heads/main/backhaul_arm64.tar.gz"
+            DOWNLOAD_URL="https://github.com/NetHamed/tunnel/raw/refs/heads/main/backhaul_premium_linux_arm64.tar.gz"
             ;;
         *)
             echo -e "${RED}Unsupported architecture: $ARCH.${NC}"
@@ -1849,7 +1849,7 @@ update_script(){
 # Define the destination path
 DEST_DIR="/usr/bin/"
 BACKHAUL_SCRIPT="backhaul"
-SCRIPT_URL="https://raw.githubusercontent.com/wafflenoodle/zenith-stash/refs/heads/main/backhaul.sh"
+SCRIPT_URL="https://raw.githubusercontent.com/NetHamed/tunnel/refs/heads/main/backhaul.sh"
 
 echo
 # Check if backhaul.sh exists in /bin/bash
