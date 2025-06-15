@@ -9,7 +9,6 @@ NC='\033[0m'
 
 # -------- مسیرها --------
 LICENSE_FILE="/etc/backhaul.license"
-USED_FLAG="/etc/.backhaul_used"
 MACHINE_ID=$(cat /etc/machine-id 2>/dev/null)
 
 # -------- بررسی لایسنس --------
@@ -42,22 +41,16 @@ check_license() {
     exit 1
   fi
 
-  if [[ -f "$USED_FLAG" ]]; then
-    echo -e "${RED}[ERROR] License has already been used once. Single-use license.${NC}"
-    exit 1
-  fi
-
   echo -e "${GREEN}[OK] License valid for user '${username}', expires on $expire_date${NC}"
-  touch "$USED_FLAG"
 }
 
 # -------- منطق برنامه اصلی --------
 main_logic() {
   echo -e "${CYAN}>>> Backhaul script running successfully on authorized machine.${NC}"
-  # this is where your main functionality goes
+  # your main logic here
 }
 
-# -------- اجرای اسکریپت --------
+# -------- اجرای نهایی --------
 check_license
 main_logic
 
